@@ -1,0 +1,15 @@
+name = "forgithub-trendbot"
+main = "index.ts"
+compatibility_date = "2025-05-21"
+
+[durable_objects]
+bindings = [
+  { name = "DORM_NAMESPACE", class_name = "DORM" }
+]
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["DORM"]
+
+[triggers]
+crons = ["0 0 * * *"] # Daily at midnight

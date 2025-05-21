@@ -1,0 +1,5 @@
+STRIPE_WEBHOOK_SIGNING_SECRET=whsec_your_webhook_secret
+STRIPE_SECRET=sk_test_your_stripe_secret
+STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key
+DB_SECRET=your_database_secret
+OPENAI_API_KEY=your_openai_api_key

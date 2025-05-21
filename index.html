@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GitHub Trending Bot</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #2563eb;
+        --primary-dark: #1e40af;
+        --secondary: #10b981;
+        --bg-light: #f8fafc;
+        --text-dark: #1e293b;
+        --text-light: #64748b;
+        --text-white: #f8fafc;
+        --border-color: #e2e8f0;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        background-color: var(--bg-light);
+        color: var(--text-dark);
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 2rem 1rem;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+      }
+
+      .logo {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--primary);
+      }
+
+      .logo i {
+        font-size: 1.75rem;
+      }
+
+      .navigation {
+        display: flex;
+        gap: 1rem;
+      }
+
+      .nav-link {
+        color: var(--text-light);
+        text-decoration: none;
+        font-weight: 500;
+        padding: 0.5rem 0.75rem;
+        border-radius: 0.375rem;
+        transition: background-color 0.2s ease;
+      }
+
+      .nav-link:hover {
+        background-color: rgba(37, 99, 235, 0.1);
+        color: var(--primary);
+      }
+
+      .card {
+        background: white;
+        border-radius: 0.75rem;
+        box-shadow: var(--shadow);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .card-header {
+        margin-bottom: 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      .info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .info-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .info-label {
+        font-size: 0.875rem;
+        font-weight: 500;
+        color: var(--text-light);
+      }
+
+      .info-value {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-dark);
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      .badge-primary {
+        background-color: rgba(37, 99, 235, 0.1);
+        color: var(--primary);
+      }
+
+      .badge-success {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--success);
+      }
+
+      .badge-warning {
+        background-color: rgba(245, 158, 11, 0.1);
+        color: var(--warning);
+      }
+
+      .badge-danger {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--danger);
+      }
+
+      .form-group {
+        margin-bottom: 1.25rem;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text-dark);
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid var(--border-color);
+        border-radius: 0.375rem;
+        font-family: "Inter", sans-serif;
+        font-size: 1rem;
+        transition: border-color 0.2s ease;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      .form-textarea {
+        min-height: 150px;
+        resize: vertical;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        font-size: 1rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background-color: var(--primary);
+        color: var(--text-white);
+      }
+
+      .btn-primary:hover {
+        background-color: var(--primary-dark);
+      }
+
+      .btn-block {
+        width: 100%;
+      }
+
+      .alert {
+        padding: 1rem;
+        border-radius: 0.375rem;
+        margin-bottom: 1rem;
+        display: none;
+      }
+
+      .alert-success {
+        background-color: rgba(16, 185, 129, 0.1);
+        border-left: 4px solid var(--success);
+        color: var(--success);
+      }
+
+      .alert-danger {
+        background-color: rgba(239, 68, 68, 0.1);
+        border-left: 4px solid var(--danger);
+        color: var(--danger);
+      }
+
+      .pricing-section {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .pricing-option {
+        flex: 1;
+        border: 1px solid var(--border-color);
+        border-radius: 0.5rem;
+        padding: 1.25rem;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .pricing-option:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow);
+      }
+
+      .pricing-header {
+        text-align: center;
+        margin-bottom: 1rem;
+      }
+
+      .pricing-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--primary);
+      }
+
+      .pricing-price {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin: 0.5rem 0;
+      }
+
+      .pricing-description {
+        color: var(--text-light);
+        font-size: 0.875rem;
+        margin-bottom: 1rem;
+      }
+
+      .pricing-features {
+        list-style: none;
+        margin-bottom: 1.5rem;
+      }
+
+      .pricing-feature {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 0.5rem;
+        color: var(--text-light);
+      }
+
+      .pricing-feature i {
+        color: var(--success);
+      }
+
+      .explanation {
+        margin-top: 2rem;
+        font-size: 0.875rem;
+        color: var(--text-light);
+        line-height: 1.7;
+      }
+
+      .emphasis {
+        font-weight: 500;
+        color: var(--primary);
+      }
+
+      /* Hidden by default */
+      #saveAlert {
+        display: none;
+      }
+
+      #signUpAlert {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo">
+          <i class="fab fa-github"></i>
+          <span>GitHub Trending Bot</span>
+        </div>
+        <div class="navigation">
+          <a href="/" class="nav-link">Home</a>
+          <a href="/results" class="nav-link">My Results</a>
+        </div>
+      </header>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Your Account</h2>
+        </div>
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Email</span>
+            <span id="userEmail" class="info-value">Not available</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Balance</span>
+            <span id="userBalance" class="info-value badge badge-primary"
+              >$0.00</span
+            >
+          </div>
+        </div>
+        <div id="signUpAlert" class="alert alert-warning">
+          You need to make a payment to use the GitHub Trending Bot.
+        </div>
+        <a
+          id="paymentLink"
+          href="#"
+          target="_blank"
+          class="btn btn-primary btn-block"
+        >
+          <i class="fab fa-stripe"></i> Pay $10 for 100 daily runs
+        </a>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2 class="card-title">Your Preferences</h2>
+        </div>
+        <div id="saveAlert" class="alert alert-success">
+          Preferences saved successfully!
+        </div>
+        <form id="preferencesForm">
+          <div class="form-group">
+            <label for="preferences" class="form-label"
+              >What kind of GitHub repositories are you interested in?</label
+            >
+            <textarea
+              id="preferences"
+              class="form-input form-textarea"
+              placeholder="Example: I'm interested in Rust libraries for web development, AI tools written in Python, and JS frameworks with good TypeScript support."
+            ></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">
+            <i class="fas fa-save"></i> Save Preferences
+          </button>
+        </form>
+      </div>
+
+      <div class="explanation">
+        <h3>How It Works</h3>
+        <p>
+          GitHub Trending Bot uses AI to analyze trending repositories and match
+          them to your interests:
+        </p>
+        <ol>
+          <li>
+            Pay <span class="emphasis">$10</span> to fund your account (100
+            daily runs)
+          </li>
+          <li>
+            Enter your preferences about the types of repositories you're
+            interested in
+          </li>
+          <li>
+            Every day, our bot will analyze the latest trending repositories
+            against your preferences
+          </li>
+          <li>
+            View your personalized results in the
+            <span class="emphasis">My Results</span> tab
+          </li>
+        </ol>
+        <p>
+          Each daily run costs <span class="emphasis">$0.10</span> from your
+          balance. We'll continue running the bot until your balance runs out.
+        </p>
+      </div>
+    </div>
+
+    <script>
+      // When the page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        // Get user data from the window object
+        const userData = window.userData || {};
+
+        // Update the UI with user data
+        if (userData.email) {
+          document.getElementById("userEmail").textContent = userData.email;
+        }
+
+        if (userData.balance !== undefined) {
+          document.getElementById("userBalance").textContent = `$${(
+            userData.balance / 100
+          ).toFixed(2)}`;
+
+          // Show the sign up alert if balance is 0
+          if (userData.balance === 0) {
+            document.getElementById("signUpAlert").style.display = "block";
+          }
+        }
+
+        // Set the payment link with client_reference_id
+        if (userData.client_reference_id) {
+          const paymentUrl = `https://buy.stripe.com/fZe9Do2HB0DHeX06UP?client_reference_id=${userData.client_reference_id}`;
+          document.getElementById("paymentLink").href = paymentUrl;
+        }
+
+        // Set preferences if available
+        if (userData.preferences) {
+          document.getElementById("preferences").value = userData.preferences;
+        }
+
+        // Handle form submission
+        document
+          .getElementById("preferencesForm")
+          .addEventListener("submit", async function (e) {
+            e.preventDefault();
+
+            const preferences = document
+              .getElementById("preferences")
+              .value.trim();
+
+            if (!preferences) {
+              alert("Please enter your preferences");
+              return;
+            }
+
+            try {
+              const response = await fetch("/api/update-preferences", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ preferences }),
+              });
+
+              const result = await response.json();
+
+              if (result.success) {
+                const saveAlert = document.getElementById("saveAlert");
+                saveAlert.style.display = "block";
+
+                // Hide the alert after 3 seconds
+                setTimeout(() => {
+                  saveAlert.style.display = "none";
+                }, 3000);
+              } else {
+                alert(`Error: ${result.error || "Failed to save preferences"}`);
+              }
+            } catch (error) {
+              alert("Error saving preferences");
+              console.error(error);
+            }
+          });
+      });
+    </script>
+  </body>
+</html>

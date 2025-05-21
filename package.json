@@ -1,0 +1,21 @@
+{
+  "name": "forgithub-trendbot",
+  "version": "1.0.0",
+  "description": "A bot that finds trending GitHub repositories based on user preferences",
+  "main": "index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "openai": "^4.33.0",
+    "stripeflare": "^0.0.15"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20240517.0",
+    "typescript": "^5.0.4",
+    "wrangler": "^3.0.0"
+  }
+}
